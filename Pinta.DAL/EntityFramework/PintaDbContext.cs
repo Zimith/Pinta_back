@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using Pinta.Domain.Auth;
+using Pinta.Domain.Security;
 
 namespace Pinta.DAL.EntityFramework;
 
 public class PintaDbContext(DbContextOptions<PintaDbContext> options)
     : DbContext(options)
 {
-    // Agregar DbSet<T> aquí a medida que se creen las entidades.
+    // Agregar DbSet<T> aquï¿½ a medida que se creen las entidades.
     // Ejemplo:
     // public DbSet<User> Users => Set<User>();
 
@@ -13,6 +15,10 @@ public class PintaDbContext(DbContextOptions<PintaDbContext> options)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configuración de entidades aquí.
+        // Configuraciï¿½n de entidades aquï¿½.
     }
+
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Person> Persons => Set<Person>();
+    public DbSet<Ban> Bans => Set<Ban>();
 }

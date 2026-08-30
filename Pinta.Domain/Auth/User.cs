@@ -1,13 +1,14 @@
 namespace Pinta.Domain.Auth;
-
+//Presiona Ctrl + K seguido de Ctrl + C para comentar
+//Presiona Ctrl + K seguido de Ctrl + U para descomentar
 public class User : Person
 {
     #region Private
     private string username = "";
     private string hashedPassword = "";
     private string email = "";
-    private Image? avatar;
-    private Image? banner;
+    // private Image? avatar=null;
+    // private Image? banner=null;
     private DateTime registrationDate;
     private bool isBanned= false;
     private RoleType roleType = RoleType.User;
@@ -29,16 +30,16 @@ public class User : Person
         get { return email; }
         set { email = value; }
     }
-    public Image? Avatar
-    {
-        get { return avatar; }
-        set { avatar = value; }
-    }
-    public Image? Banner
-    {
-        get { return banner; }
-        set { banner = value; }
-    }
+    // public virtual Image? Avatar
+    // {
+    //     get { return avatar; }
+    //     set { avatar = value; }
+    // }
+    // public virtual Image? Banner
+    // {
+    //     get { return banner; }
+    //     set { banner = value; }
+    // }
     public DateTime RegistrationDate
     {
         get { return registrationDate; }
