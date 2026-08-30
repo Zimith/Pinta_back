@@ -5,9 +5,9 @@ public class Post
     #region Private
     private int id;
     private string description = string.Empty;
-    private string? imagePost;
-    private string? videoPost;
-    private string? gameName;
+    private DateTime creationDate;
+    private string? image;
+    private string? game;
     #endregion
 
     #region Public
@@ -23,34 +23,30 @@ public class Post
         set { description = value; }
     }
 
-    public string? ImagePost
+    public DateTime CreationDate
     {
-        get { return imagePost; }
-        set { imagePost = value; }
+        get { return creationDate; }
+        set { creationDate = value; }
     }
 
-    public string? VideoPost
+    public string? Image
     {
-        get { return videoPost; }
-        set { videoPost = value; }
+        get { return image; }
+        set { image = value; }
     }
 
-    public string? GameName
+    public string? Game
     {
-        get { return gameName; }
-        set { gameName = value; }
+        get { return game; }
+        set { game = value; }
     }
     #endregion
 
-    public void EditPost(string description, string? imagePost, string? videoPost, string? gameName)
+    public void Edit()
     {
-        Description = description;
-        ImagePost = imagePost;
-        VideoPost = videoPost;
-        GameName = gameName;
     }
 
-    public void DeletePost()
+    public void Delete()
     {
     }
 }

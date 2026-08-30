@@ -1,3 +1,6 @@
+using Pinta.Domain.Auth;
+using Pinta.Domain.Posts;
+
 namespace Pinta.Domain.Comments;
 
 public class Comment
@@ -5,6 +8,10 @@ public class Comment
     #region Private
     private int id;
     private string description = string.Empty;
+    private int userId;
+    private int postId;
+    private User user = null!;
+    private Post post = null!;
     #endregion
 
     #region Public
@@ -19,14 +26,37 @@ public class Comment
         get { return description; }
         set { description = value; }
     }
-    #endregion
 
-    public void EditComment(string description)
+    public int UserId
     {
-        Description = description;
+        get { return userId; }
+        set { userId = value; }
     }
 
-    public void DeleteComment()
+    public int PostId
+    {
+        get { return postId; }
+        set { postId = value; }
+    }
+
+    public User User
+    {
+        get { return user; }
+        set { user = value; }
+    }
+
+    public Post Post
+    {
+        get { return post; }
+        set { post = value; }
+    }
+    #endregion
+
+    public void Edit()
+    {
+    }
+
+    public void Delete()
     {
     }
 }
