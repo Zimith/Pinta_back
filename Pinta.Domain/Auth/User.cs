@@ -1,14 +1,16 @@
+using System.Security.Cryptography;
+using System.Text;
+
 namespace Pinta.Domain.Auth;
-//Presiona Ctrl + K seguido de Ctrl + C para comentar
-//Presiona Ctrl + K seguido de Ctrl + U para descomentar
+
 public class User : Person
 {
     #region Private
     private string username = "";
     private string hashedPassword = "";
     private string email = "";
-    // private Image? avatar=null;
-    // private Image? banner=null;
+    // private Image? avatar;
+    // private Image? banner;
     private DateTime registrationDate;
     private bool isBanned= false;
     private RoleType roleType = RoleType.User;
@@ -30,12 +32,12 @@ public class User : Person
         get { return email; }
         set { email = value; }
     }
-    // public virtual Image? Avatar
+    // public Image? Avatar
     // {
     //     get { return avatar; }
     //     set { avatar = value; }
     // }
-    // public virtual Image? Banner
+    // public Image? Banner
     // {
     //     get { return banner; }
     //     set { banner = value; }
@@ -56,4 +58,28 @@ public class User : Person
         set { roleType = value; }
     }
     #endregion
+
+    private static string encript(string hashedPassword)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(hashedPassword);
+        byte[] bytesHash = SHA1.HashData(bytes);
+
+        return Convert.ToBase64String(bytesHash);
+    }
+
+    public virtual void SetPassword(string hashedPassword)
+    {
+        this.HashedPassword = User.encript(hashedPassword);
+    }
+
+    public virtual bool IsPassword(string hashedPassword)
+    {
+        string passEncripted = User.encript(hashedPassword);
+        if (this.HashedPassword == passEncripted)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
