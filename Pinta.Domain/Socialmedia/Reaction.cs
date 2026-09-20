@@ -7,7 +7,7 @@ public class Reaction
 {
     private int id;
     // private Post post;
-    private User user;
+    private User user = new User();
     // private int postId;
     private int userId;
 

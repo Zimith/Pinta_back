@@ -3,9 +3,10 @@ namespace Pinta.DAL.EntityFramework.Auth;
 
 public class EFUserRepository : IUserRepository
 {
-    private PintaDbContext dbContext;
-    public EFUserRepository(PintaDbContext dbContext)
+    private PintaDbContext _context;
+
+    public EFUserRepository(PintaDbContext context)
     {
-        this.dbContext = dbContext;
+        _context = context;
     }
 }

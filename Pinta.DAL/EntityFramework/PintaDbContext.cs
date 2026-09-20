@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Pinta.Domain.Auth;
 using Pinta.Domain.Security;
+using Pinta.Domain.Socialmedia;
 
 namespace Pinta.DAL.EntityFramework;
 
@@ -21,4 +22,5 @@ public class PintaDbContext(DbContextOptions<PintaDbContext> options)
     public DbSet<User> Users => Set<User>();
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<Ban> Bans => Set<Ban>();
+    public DbSet<Reaction> Reactions => Set<Reaction>();
 }

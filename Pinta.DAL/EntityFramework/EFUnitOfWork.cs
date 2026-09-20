@@ -1,43 +1,56 @@
+using Pinta.DAL.EntityFramework.Auth;
+using Pinta.DAL.EntityFramework.Security;
+using Pinta.DAL.EntityFramework.Socialmedia;
 using Pinta.DAL.interfaces;
 using Pinta.DAL.interfaces.Auth;
 using Pinta.DAL.interfaces.Security;
-using Pinta.DAL.EntityFramework.Auth;
-using Pinta.DAL.EntityFramework.Security;
+using Pinta.DAL.interfaces.Socialmedia;
 
 namespace Pinta.DAL.EntityFramework;
 
-public class EFUnitOfWork(PintaDbContext context) : IUnitOfWork
+public class EFUnitOfWork (PintaDbContext context) : IUnitOfWork
 {
     private readonly PintaDbContext _context = context;
 
-    #region IUserRepository
+    
     private IUserRepository? userRepository;
     public IUserRepository UserRepository
     {
         get
         {
-            if (userRepository == null)
+            if(this.userRepository == null)
             {
-                userRepository = new EFUserRepository(_context);
+                this.userRepository = new EFUserRepository(_context);
             }
-            return userRepository;
+            return this.userRepository;
         }
     }
-    #endregion
-    #region IbanRepository
+
     private IBanRepository? banRepository;
     public IBanRepository BanRepository
     {
         get
         {
-            if (banRepository == null)
+            if(this.banRepository == null)
             {
-                banRepository = new EFBanRepository(_context);
+                this.banRepository = new EFBanRepository(_context);
             }
-            return banRepository;
+            return this.banRepository;
         }
     }
-    #endregion
+
+    private IReactionRepository? reactionRepository;
+    public IReactionRepository ReactionRepository
+    {
+        get
+        {
+            if(this.reactionRepository == null)
+            {
+                this.reactionRepository = new EFReactionRepository(_context);
+            }
+            return this.reactionRepository;
+        }
+    }
 
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -49,4 +62,5 @@ public class EFUnitOfWork(PintaDbContext context) : IUnitOfWork
     {
         _context.Dispose();
     }
+
 }
