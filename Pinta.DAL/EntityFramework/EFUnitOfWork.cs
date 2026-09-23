@@ -63,4 +63,8 @@ public class EFUnitOfWork (PintaDbContext context) : IUnitOfWork
         _context.Dispose();
     }
 
+    public async Task SaveChangesasync()
+    {
+        await _context.SaveChangesAsync();
+    }
 }

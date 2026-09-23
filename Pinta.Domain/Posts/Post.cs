@@ -1,3 +1,5 @@
+using Pinta.Domain.Auth;
+
 namespace Pinta.Domain.Posts;
 
 public class Post
@@ -8,6 +10,10 @@ public class Post
     private DateTime creationDate;
     private string? image;
     private string? game;
+    private User user = null!;
+    private int userId;
+    private ICollection<Comment> comments = new List<Comment>();
+    private ICollection<Reaction> reactions = new List<Reaction>();
     #endregion
 
     #region Public
@@ -39,6 +45,26 @@ public class Post
     {
         get { return game; }
         set { game = value; }
+    }
+    public int UserId
+    {
+        get { return userId; }
+        set { userId = value; }
+    }
+    public virtual User User
+    {
+        get { return user; }
+        set { user = value; }
+    }
+    public virtual ICollection<Comment> Comments
+    {
+        get { return comments; }
+        set { comments = value; }
+    }
+    public virtual ICollection<Reaction> Reactions
+    {
+        get { return reactions; }
+        set { reactions = value; }
     }
     #endregion
 

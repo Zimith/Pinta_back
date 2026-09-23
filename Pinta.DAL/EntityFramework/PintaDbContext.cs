@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Pinta.Domain.Auth;
-using Pinta.Domain.Comments;
 using Pinta.Domain.Posts;
 using Pinta.Domain.Security;
-using Pinta.Domain.Socialmedia;
+
 
 namespace Pinta.DAL.EntityFramework;
 

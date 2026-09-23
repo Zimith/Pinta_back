@@ -1,7 +1,6 @@
 using Pinta.Domain.Auth;
-using Pinta.Domain.Posts;
 
-namespace Pinta.Domain.Comments;
+namespace Pinta.Domain.Posts;
 
 public class Comment
 {
@@ -39,13 +38,13 @@ public class Comment
         set { postId = value; }
     }
 
-    public User User
+    public virtual User User
     {
         get { return user; }
         set { user = value; }
     }
 
-    public Post Post
+    public virtual Post Post
     {
         get { return post; }
         set { post = value; }

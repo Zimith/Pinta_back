@@ -1,4 +1,4 @@
-namespace Pinta.Domain.Socialmedia;
+namespace Pinta.Domain.Posts;
 
 public enum ReactionType
 {

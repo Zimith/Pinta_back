@@ -1,4 +1,4 @@
-namespace Ejemplo.Domain.FileSystem;
+namespace Pinta.Domain.FileSystem;
 
 public class File
 {
