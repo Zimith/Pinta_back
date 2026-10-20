@@ -1,5 +1,5 @@
 namespace Pinta.Domain.Profile;
-public class Follow
+public class Following
 {
     #region Private
     private int id;

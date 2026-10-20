@@ -3,7 +3,7 @@ public class Person
 {
     #region Private
     private int id;
-    private string fullname= "";
+    private string fullname=null!;
     #endregion
 
     #region Public

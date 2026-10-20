@@ -11,6 +11,7 @@ public class Ban
     private DateTime startDate;
     private DateTime? endDate;
     private User user = null!;
+    private int userId;
 
     #endregion
 
@@ -44,6 +45,12 @@ public class Ban
     {
         get { return user; }
         set { user = value; }
+    }
+
+    public int UserId
+    {
+        get { return userId; }
+        set { userId = value; }
     }
 
     #endregion
