@@ -1,5 +1,5 @@
-using Pinta.DAL.interfaces.Socialmedia;
-namespace Pinta.DAL.EntityFramework.Socialmedia;
+using Pinta.DAL.interfaces.Posts;
+namespace Pinta.DAL.EntityFramework.Posts;
 
 
 

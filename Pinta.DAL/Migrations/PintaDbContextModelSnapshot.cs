@@ -25,7 +25,7 @@ namespace Pinta.DAL.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Pinta.Domain.Auth.Person", b =>
+            modelBuilder.Entity("Pinta.Domain.Auth.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,25 +33,47 @@ namespace Pinta.DAL.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Discriminator")
+                    b.Property<long?>("AvatarId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("BannerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Fullname")
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.HasIndex("AvatarId");
 
-                    b.HasDiscriminator().HasValue("Person");
+                    b.HasIndex("BannerId");
 
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Pinta.Domain.FileSystem.Image", b =>
+            modelBuilder.Entity("Pinta.Domain.FileSystem.File", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,50 +85,26 @@ namespace Pinta.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("varchar(5)");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("int");
 
                     b.Property<string>("StoragePath")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Width")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Image");
-                });
+                    b.ToTable("Files");
 
-            modelBuilder.Entity("Pinta.Domain.Posts.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasDiscriminator().HasValue("File");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Comments");
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Pinta.Domain.Posts.Post", b =>
@@ -194,61 +192,55 @@ namespace Pinta.DAL.Migrations
                     b.ToTable("Bans");
                 });
 
-            modelBuilder.Entity("Pinta.Domain.Auth.User", b =>
+            modelBuilder.Entity("Pinta.Domain.Social.Follow", b =>
                 {
-                    b.HasBaseType("Pinta.Domain.Auth.Person");
-
-                    b.Property<long?>("AvatarId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("BannerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("HashedPassword")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("IsBanned")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Role")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("AvatarId");
+                    b.Property<int?>("UserFollowedId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("BannerId");
+                    b.Property<int?>("UserFollowingId")
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("User");
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserFollowedId");
+
+                    b.HasIndex("UserFollowingId");
+
+                    b.ToTable("Follows");
                 });
 
-            modelBuilder.Entity("Pinta.Domain.Posts.Comment", b =>
+            modelBuilder.Entity("Pinta.Domain.FileSystem.Image", b =>
                 {
-                    b.HasOne("Pinta.Domain.Posts.Post", "Post")
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("Pinta.Domain.FileSystem.File");
 
-                    b.HasOne("Pinta.Domain.Auth.User", "User")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
 
-                    b.Navigation("Post");
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
 
-                    b.Navigation("User");
+                    b.HasDiscriminator().HasValue("Image");
+                });
+
+            modelBuilder.Entity("Pinta.Domain.Auth.User", b =>
+                {
+                    b.HasOne("Pinta.Domain.FileSystem.Image", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId");
+
+                    b.HasOne("Pinta.Domain.FileSystem.Image", "Banner")
+                        .WithMany()
+                        .HasForeignKey("BannerId");
+
+                    b.Navigation("Avatar");
+
+                    b.Navigation("Banner");
                 });
 
             modelBuilder.Entity("Pinta.Domain.Posts.Post", b =>
@@ -292,36 +284,32 @@ namespace Pinta.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Pinta.Domain.Auth.User", b =>
+            modelBuilder.Entity("Pinta.Domain.Social.Follow", b =>
                 {
-                    b.HasOne("Pinta.Domain.FileSystem.Image", "Avatar")
+                    b.HasOne("Pinta.Domain.Auth.User", "UserFollowed")
                         .WithMany()
-                        .HasForeignKey("AvatarId");
+                        .HasForeignKey("UserFollowedId");
 
-                    b.HasOne("Pinta.Domain.FileSystem.Image", "Banner")
+                    b.HasOne("Pinta.Domain.Auth.User", "UserFollowing")
                         .WithMany()
-                        .HasForeignKey("BannerId");
+                        .HasForeignKey("UserFollowingId");
 
-                    b.Navigation("Avatar");
+                    b.Navigation("UserFollowed");
 
-                    b.Navigation("Banner");
-                });
-
-            modelBuilder.Entity("Pinta.Domain.Posts.Post", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("Reactions");
+                    b.Navigation("UserFollowing");
                 });
 
             modelBuilder.Entity("Pinta.Domain.Auth.User", b =>
                 {
                     b.Navigation("Bans");
 
-                    b.Navigation("Comments");
-
                     b.Navigation("Posts");
 
+                    b.Navigation("Reactions");
+                });
+
+            modelBuilder.Entity("Pinta.Domain.Posts.Post", b =>
+                {
                     b.Navigation("Reactions");
                 });
 #pragma warning restore 612, 618

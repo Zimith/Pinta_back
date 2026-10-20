@@ -5,6 +5,7 @@ using Pinta.DAL.interfaces;
 using Pinta.Domain.Auth;
 using Pinta.Domain.FileSystem;
 
+
 namespace Pinta.API.Controllers;
 
 [ApiController]
@@ -68,7 +69,6 @@ public class UserController : ControllerBase
         {
             Username = request.username,
             Email = request.email,
-            Fullname = request.Fullname,
             Avatar = image
 
         };

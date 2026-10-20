@@ -18,8 +18,6 @@ public class User : Person
     private bool isBanned= false;
     private RoleType roleType = RoleType.User;
 
-    private ICollection<Comment> comments = new List<Comment>();
-
     private ICollection<Reaction> reactions = new List<Reaction>();
     private ICollection<Ban> bans = new List<Ban>();
 
@@ -67,11 +65,6 @@ public class User : Person
     {
         get { return roleType; }
         set { roleType = value; }
-    }
-    public virtual ICollection<Comment> Comments
-    {
-        get { return comments; }
-        set { comments = value; }
     }
     public virtual ICollection<Reaction> Reactions
     {

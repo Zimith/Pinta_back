@@ -1,10 +1,15 @@
 using Pinta.DAL.EntityFramework.Auth;
 using Pinta.DAL.EntityFramework.Security;
-using Pinta.DAL.EntityFramework.Socialmedia;
+using Pinta.DAL.EntityFramework.Social;
+using Pinta.DAL.EntityFramework.Posts;
+
 using Pinta.DAL.interfaces;
 using Pinta.DAL.interfaces.Auth;
 using Pinta.DAL.interfaces.Security;
-using Pinta.DAL.interfaces.Socialmedia;
+using Pinta.DAL.interfaces.Social;
+using Pinta.DAL.interfaces.Posts;
+using Pinta.DAL.interfaces.FileSystem;
+using Pinta.DAL.EntityFramework.FileSystem;
 
 namespace Pinta.DAL.EntityFramework;
 
@@ -52,6 +57,57 @@ public class EFUnitOfWork (PintaDbContext context) : IUnitOfWork
         }
     }
 
+    private IFileRepository? fileRepository;
+    public IFileRepository FileRepository
+    {
+        get
+        {
+            if(this.fileRepository is null)
+            {
+                this.fileRepository = new EFFileRepository(_context);
+            }
+            return this.fileRepository;
+        }
+    }
+
+    private IImageRepository? imageRepository;
+    public IImageRepository ImageRepository
+    {
+        get
+        {
+            if(this.imageRepository is null)
+            {
+                this.imageRepository = new EFImageRepository(_context);
+            }
+            return this.imageRepository;
+        }
+    }
+
+    private IPostRepository? postRepository;
+    public IPostRepository PostRepository
+    {
+        get
+        {
+            if(this.postRepository is null)
+            {
+                this.postRepository = new EFPostRepository(_context);
+            }
+            return this.postRepository;
+        }
+    }
+
+    private IFollowRepository? followRepository;
+    public IFollowRepository FollowRepository
+    {
+        get
+        {
+            if(this.followRepository is null)
+            {
+                this.followRepository = new EFFollowRepository(_context);
+            }
+            return this.followRepository;
+        }
+    }
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

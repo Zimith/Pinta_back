@@ -1,0 +1,16 @@
+using Pinta.Domain.Auth;
+namespace Pinta.Domain.Social;
+
+public class Follow
+{
+    private int id;
+    private User? userFollowing;
+    private User? userFollowed;
+
+
+    public int Id { get { return this.id; } set { this.id = value; } }
+    public virtual User? UserFollowing { get { return this.userFollowing; } set { this.userFollowing = value; } }
+    public virtual User? UserFollowed { get { return this.userFollowed; } set { this.userFollowed = value; } }
+
+
+}

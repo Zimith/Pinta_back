@@ -12,7 +12,6 @@ public class Post
     private string? game;
     private User user = null!;
     private int userId;
-    private ICollection<Comment> comments = new List<Comment>();
     private ICollection<Reaction> reactions = new List<Reaction>();
     #endregion
 
@@ -55,11 +54,6 @@ public class Post
     {
         get { return user; }
         set { user = value; }
-    }
-    public virtual ICollection<Comment> Comments
-    {
-        get { return comments; }
-        set { comments = value; }
     }
     public virtual ICollection<Reaction> Reactions
     {
