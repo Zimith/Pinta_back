@@ -18,6 +18,11 @@ public class EFUserRepository : IUserRepository
         return true;
     }
 
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        return await this._context.Users.FirstOrDefaultAsync(u => u.Email.ToUpper() == email.ToUpper());
+    }
+
     public async Task<User?> GetUserByUsername(string username)
     {
         List <User> users = await this._context.Users.Where(u => u.Username.ToUpper().Equals(username.ToUpper())).ToListAsync();

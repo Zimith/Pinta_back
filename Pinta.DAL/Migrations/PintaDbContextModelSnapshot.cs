@@ -44,7 +44,6 @@ namespace Pinta.DAL.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Fullname")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("HashedPassword")
