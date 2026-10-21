@@ -2,6 +2,7 @@ using Pinta.DAL.EntityFramework.Auth;
 using Pinta.DAL.EntityFramework.Security;
 using Pinta.DAL.EntityFramework.Social;
 using Pinta.DAL.EntityFramework.Posts;
+using Pinta.DAL.EntityFramework.Profile;
 
 using Pinta.DAL.interfaces;
 using Pinta.DAL.interfaces.Auth;
@@ -10,7 +11,7 @@ using Pinta.DAL.interfaces.Social;
 using Pinta.DAL.interfaces.Posts;
 using Pinta.DAL.interfaces.FileSystem;
 using Pinta.DAL.EntityFramework.FileSystem;
-
+using Pinta.DAL.interfaces.Profile;
 namespace Pinta.DAL.EntityFramework;
 
 public class EFUnitOfWork (PintaDbContext context) : IUnitOfWork
@@ -106,6 +107,32 @@ public class EFUnitOfWork (PintaDbContext context) : IUnitOfWork
                 this.followRepository = new EFFollowRepository(_context);
             }
             return this.followRepository;
+        }
+    }
+
+    private IAvatarRepository? avatarRepository;
+    public IAvatarRepository AvatarRepository
+    {
+        get
+        {
+            if(this.avatarRepository is null)
+            {
+                this.avatarRepository = new EFAvatarRepository(_context);
+            }
+            return this.avatarRepository;
+        }
+    }
+
+    private IPortadaperfilRepository? portadaperfilRepository;
+    public IPortadaperfilRepository PortadaperfilRepository
+    {
+        get
+        {
+            if(this.portadaperfilRepository is null)
+            {
+                this.portadaperfilRepository = new EFPortadaperfilRepository(_context);
+            }
+            return this.portadaperfilRepository;
         }
     }
 

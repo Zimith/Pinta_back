@@ -3,6 +3,7 @@ using Pinta.DAL.interfaces.Security;
 using Pinta.DAL.interfaces.Social;
 using Pinta.DAL.interfaces.Posts;
 using Pinta.DAL.interfaces.FileSystem;
+using Pinta.DAL.interfaces.Profile;
 namespace Pinta.DAL.interfaces;
 
 public interface IUnitOfWork : IDisposable
@@ -18,4 +19,6 @@ public interface IUnitOfWork : IDisposable
     IBanRepository BanRepository { get; }
     IFollowRepository FollowRepository { get; }
     
+    IAvatarRepository AvatarRepository { get; }
+    IPortadaperfilRepository PortadaperfilRepository { get; }
 }
