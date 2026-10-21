@@ -56,7 +56,8 @@ namespace Pinta.DAL.Migrations
                 name: "PK_Files",
                 table: "Files",
                 column: "Id");
-
+            migrationBuilder.DropTable(
+                name: "Follows");
             migrationBuilder.CreateTable(
                 name: "Follows",
                 columns: table => new

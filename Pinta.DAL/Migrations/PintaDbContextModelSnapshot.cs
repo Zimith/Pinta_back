@@ -70,7 +70,7 @@ namespace Pinta.DAL.Migrations
 
                     b.HasIndex("BannerId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Pinta.Domain.FileSystem.File", b =>
@@ -100,81 +100,14 @@ namespace Pinta.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Files");
+                    b.ToTable("Files", (string)null);
 
                     b.HasDiscriminator().HasValue("File");
 
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Pinta.Domain.Profile.Avatar", b =>
-                {
-                    b.Property<int>("Id")
-                     .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageUrl")
-                    .IsRequired()
-                    .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Avatars");
-                });
-
             modelBuilder.Entity("Pinta.Domain.Posts.Post", b =>
-                {
-                    b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                    .IsRequired()
-                    .HasColumnType("longtext");
-
-                    b.Property<string>("Game")
-                    .HasColumnType("longtext");
-
-                    b.Property<string>("Image")
-                    .HasColumnType("longtext");
-
-                    b.Property<int>("UserId")
-                    .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("Pinta.Domain.Profile.Following", b =>
-                {
-                    b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FollowerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FollowingId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Followings");
-                });
-
-            modelBuilder.Entity("Pinta.Domain.Profile.Portadaperfil", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -182,13 +115,27 @@ namespace Pinta.DAL.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Game")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Portadaperfiles");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Pinta.Domain.Posts.Reaction", b =>
@@ -214,7 +161,7 @@ namespace Pinta.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reactions");
+                    b.ToTable("Reactions", (string)null);
                 });
 
             modelBuilder.Entity("Pinta.Domain.Security.Ban", b =>
@@ -242,7 +189,7 @@ namespace Pinta.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bans");
+                    b.ToTable("Bans", (string)null);
                 });
 
             modelBuilder.Entity("Pinta.Domain.Social.Follow", b =>
@@ -265,7 +212,7 @@ namespace Pinta.DAL.Migrations
 
                     b.HasIndex("UserFollowingId");
 
-                    b.ToTable("Follows");
+                    b.ToTable("Follows", (string)null);
                 });
 
             modelBuilder.Entity("Pinta.Domain.FileSystem.Image", b =>

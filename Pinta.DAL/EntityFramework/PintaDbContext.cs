@@ -34,5 +34,5 @@ public class PintaDbContext(DbContextOptions<PintaDbContext> options)
 
     public DbSet<Avatar> Avatars => Set<Avatar>();
     public DbSet<Portadaperfil> Portadaperfiles => Set<Portadaperfil>();
-    public DbSet<Following> Followings => Set<Following>();
+    
 }
