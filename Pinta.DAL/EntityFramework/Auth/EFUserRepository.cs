@@ -18,6 +18,11 @@ public class EFUserRepository : IUserRepository
         return true;
     }
 
+    public async Task<User?> GetUserById(int idToken)
+    {
+        return await this._context.Users.FirstOrDefaultAsync(u => u.Id == idToken);
+    }
+
     public async Task<User?> GetUserByEmail(string email)
     {
         return await this._context.Users.FirstOrDefaultAsync(u => u.Email.ToUpper() == email.ToUpper());
@@ -29,5 +34,16 @@ public class EFUserRepository : IUserRepository
 
         if(users != null && users.Count > 0) return users[0];
         return null;
+    }
+
+    public async Task<List<User>> SearchUsers(string username)
+    {
+        List<User> users = await this._context.Users.Where(u =>u.Username.ToUpper().Contains(username.ToUpper())).ToListAsync();
+        return users;
+    }
+
+    public async Task<User?> GetProfile(int id)
+    {
+        return await this._context.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 }

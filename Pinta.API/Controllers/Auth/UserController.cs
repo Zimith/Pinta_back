@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Pinta.DAL.interfaces;
 using Pinta.Domain.Auth;
 using Pinta.Domain.FileSystem;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 
 namespace Pinta.API.Controllers;
@@ -29,7 +31,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Create([FromForm]CreateUserRequest request)
     {
         await validationUser(request);
-        Image? image = await generatorImage(request);
+        Image? image = await generatorImage(request.file);
 
         //Agregar validacion usando renex
         //8 caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial
@@ -76,15 +78,15 @@ public class UserController : ControllerBase
         return user;
     }
 
-    private async Task<Image?> generatorImage(CreateUserRequest request)
+    private async Task<Image?> generatorImage(IFormFile? file)
     {
-        if (request.file is null) return null;
+        if (file is null) return null;
         
-        await using var stream = request.file.OpenReadStream();
+        await using var stream = file.OpenReadStream();
         using var ms = new MemoryStream();
         await stream.CopyToAsync(ms);
         byte[]? fileData = ms.ToArray();
-        string?fileName = request.file.FileName;
+        string?fileName = file.FileName;
         
         FileStorageService storageService = new FileStorageService(env);
         return await storageService.SaveImageAsync(fileData, fileName);
@@ -135,6 +137,7 @@ public class UserController : ControllerBase
             id = user.Id,
             username = user.Username,
             token = token,
+            avatar = user.GetAvatar(),
         };
         return Ok(new ResponseDTO<LoginResponse>
         {
@@ -155,6 +158,7 @@ public class UserController : ControllerBase
         {
             throw new ValidationException("La contraseña no puede estar vacía");
         }
+
         User? user = await this.dataBase.UserRepository.GetUserByUsername(request.username);
         if (user == null)
         {
@@ -168,4 +172,124 @@ public class UserController : ControllerBase
 
         return user;
     }
+    [Authorize]
+    [HttpPut("edit")]
+    public async Task<IActionResult> Update([FromForm] UpdateRequest request)
+    {
+
+        string? idToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if(string.IsNullOrEmpty(idToken))
+        {
+            return Unauthorized("Token Invalido");
+        }
+        int userId = int.Parse(idToken);
+
+        User? userDB = await this.dataBase.UserRepository.GetUserById(userId);
+        if (userDB==null)
+        {
+            return NotFound("El usuario no existe");
+        }
+        if(!string.IsNullOrEmpty(request.username))
+        {
+            userDB.Username = request.username;
+        }
+        if(request.avatar != null)
+        {
+            userDB.Avatar = await generatorImage(request.avatar);
+        }
+        if(request.banner != null)
+        {
+            userDB.Banner = await generatorImage(request.banner);
+        }
+        await this.dataBase.SaveChangesAsync();
+
+        UpdateResponse response = new UpdateResponse
+        {
+            id = userDB.Id,
+            username = userDB.Username,
+            avatar = userDB.GetAvatar(),
+            banner = userDB.GetBanner(),
+        };
+
+        return Ok(new ResponseDTO<UpdateResponse>
+        {
+            code = (int)HttpStatusCode.OK,
+            message = "Perfil actualizado correctamente",
+            success = true,
+            payload = response
+        });
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string? username = "")
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return BadRequest("El buscador esta vacio, escribi algo");
+        }
+        List<User> userSearch = await this.dataBase.UserRepository.SearchUsers(username);
+        
+        if(userSearch.Count == 0)
+        {
+            return NotFound("El usuario se encontro.");
+        };
+        List<SearchUserResponse> responsList = new List<SearchUserResponse>();
+
+        foreach(User users in userSearch)
+        {
+            SearchUserResponse userList = new SearchUserResponse
+            {
+                id = users.Id,
+                username = users.Username,
+                avatar = users.GetAvatar(),
+                isFollow = false
+            };
+            responsList.Add(userList);
+        }
+        return Ok(new ResponseDTO<List<SearchUserResponse>>
+        {
+            code = (int)HttpStatusCode.OK,
+            message = "Usuarios Encontrados",
+            payload = responsList
+        });
+        
+    }
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetProfile ([FromRoute] int id)
+    {
+        if (id <= 0)
+        {
+            return BadRequest("El id del usuario no es válido");
+        }
+        User? userDB = await this.dataBase.UserRepository.GetProfile(id);
+
+        if (userDB == null)
+        {
+            return NotFound("Usuario no encontrado");
+        }
+        UserProfileResponse response = new UserProfileResponse
+        {
+            username = userDB.Username,
+            avatar = userDB.GetAvatar(),
+            banner = userDB.GetBanner(),
+            /*
+            followingCount = userDB.followingCount,
+            followersCount = userDB.followsCount,
+            postsCount = userDB.postsCount,
+            description = userDB.description,
+            country = userDB.country,
+            joinData = userDB.joinData,
+            */
+        };
+        return Ok(new ResponseDTO<UserProfileResponse>
+        {
+            code = (int)HttpStatusCode.OK,
+            message = "Perfil encontrado",
+            success = true,
+            payload = response
+        });
+    }
+
 }
