@@ -8,4 +8,7 @@ public interface IUserRepository
 
     Task<bool> Create(User user);
     Task<User?> GetUserByEmail(string email);
+    Task<User?> GetUserById(int idToken);
+    Task<List<User>> SearchUsers(string username);
+    Task<User?> GetProfile(int id);
 }
