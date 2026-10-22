@@ -3,7 +3,7 @@ public class Person
 {
     #region Private
     private int id;
-    private string fullname=null!;
+    private string? fullname;
     #endregion
 
     #region Public
@@ -13,7 +13,7 @@ public class Person
         set { id = value; }
     }
 
-    public string Fullname
+    public string? Fullname
     {
         get { return fullname; }
         set { fullname = value; }

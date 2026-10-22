@@ -43,8 +43,7 @@ public class UserController : ControllerBase
             username = user.Username,
             hashedPassword = user.HashedPassword,
             email = user.Email,
-            //Fullname = user.Fullname,
-            //avatar = user.GetAvatar()
+            avatar = user.GetAvatar()
         };
 
         return Ok(new ResponseDTO<CreateUserResponse>
@@ -108,12 +107,18 @@ public class UserController : ControllerBase
             throw new ValidationException("El correo electrónico no puede estar vacío");
         }
 
-        User? existinguser = await this.dataBase.UserRepository.GetUserByUsername(request.username);
+        User? existingUserName = await this.dataBase.UserRepository.GetUserByUsername(request.username);
 
-        if (existinguser != null)
+        if (existingUserName != null)
         {
             throw new ValidationException("El nombre de usuario ya existe " + request.username);
         }
+        User?  existingEmail = await this.dataBase.UserRepository.GetUserByEmail(request.email);
+        if (existingEmail !=null)
+        {
+            throw new ValidationException("El Email ya esta en uso" + request.email);
+        }
+
     }
 
     [HttpPost("login")]

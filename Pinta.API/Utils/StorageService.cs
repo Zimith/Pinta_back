@@ -31,7 +31,7 @@ public class FileStorageService
         using var image = new MagickImage(data);
 
         image.Format = MagickFormat.WebP;
-        image.Write(physicalPath);
+        await image.WriteAsync(physicalPath);
 
         return new Image
         {

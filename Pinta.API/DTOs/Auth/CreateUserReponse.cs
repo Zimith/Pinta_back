@@ -6,5 +6,5 @@ public class CreateUserResponse
     public string username { get; set; } = "";
     public string password { get; set; } = "";
     public string email { get; set; } = "";
-    public string avatar { get; set; } = "";
+    public string? avatar { get; set; }
 }
