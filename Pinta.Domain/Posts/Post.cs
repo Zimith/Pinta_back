@@ -69,4 +69,15 @@ public class Post
     public void Delete()
     {
     }
+
+    public string GetUserName()
+    {
+        if(this.User != null) return this.User.Username;
+        return "Usuario no encontrado";
+    }
+
+    public string? ImageUrl()
+    {
+        return Image;
+    }
 }

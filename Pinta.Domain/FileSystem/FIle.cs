@@ -1,6 +1,6 @@
 namespace Pinta.Domain.FileSystem;
 
-public class File
+public abstract class File
 {
     private long id;
     public long Id { get => id; set => id = value; }
@@ -13,6 +13,9 @@ public class File
 
     private string storagePath = string.Empty;
     public string StoragePath { get => storagePath; set => storagePath = value; }
+
+    
+    public abstract string? ImageUrl();
 
 
 }

@@ -8,7 +8,7 @@ public class Image : File
     private int height = 0;
     public int Height { get => height; set => height = value; }         
     
-    public string? ImageUrl()
+    public override string? ImageUrl()
     {
         return "image/" + this.FileName;
     }

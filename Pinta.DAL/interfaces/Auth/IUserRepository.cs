@@ -11,4 +11,5 @@ public interface IUserRepository
     Task<User?> GetUserById(int idToken);
     Task<List<User>> SearchUsers(string username);
     Task<User?> GetProfile(int id);
+    Task<User> GetUserById(long userId);
 }

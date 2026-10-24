@@ -46,4 +46,9 @@ public class EFUserRepository : IUserRepository
     {
         return await this._context.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
+
+    public Task<User> GetUserById(long userId)
+    {
+        throw new NotImplementedException();
+    }
 }
