@@ -19,6 +19,59 @@ public class PostsController : ControllerBase
         this.dataBase = unitOfWork;
     }
 
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest request, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request.title))
+        {
+            throw new ValidationException("El título del post no puede estar vacío");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.body))
+        {
+            throw new ValidationException("El contenido del post no puede estar vacío");
+        }
+
+        long userId = User.GetUserId();
+        if (userId <= 0 || userId > int.MaxValue)
+        {
+            throw new InvalidCredentialsException("El usuario del token no es válido");
+        }
+
+        User? user = await this.dataBase.UserRepository.GetUserById((int)userId);
+        if (user is null)
+        {
+            throw new BusinessNotFoundException("El usuario no existe");
+        }
+
+        Post post = new Post
+        {
+            Title = request.title,
+            Description = request.body,
+            CreationDate = DateTime.UtcNow,
+            User = user
+        };
+
+        await this.dataBase.PostRepository.Create(post);
+        await this.dataBase.SaveChangesAsync(cancellationToken);
+
+        CreatePostResponse response = new CreatePostResponse
+        {
+            id = post.Id,
+            title = post.Title,
+            body = post.Description
+        };
+
+        return Created($"/api/post/{post.Id}", new ResponseDTO<CreatePostResponse>
+        {
+            code = (int)HttpStatusCode.Created,
+            message = "Post creado correctamente",
+            payload = response,
+            success = true
+        });
+    }
+
 	[Authorize]
     [HttpGet]
     public async Task<IActionResult> GetPosts([FromQuery] GetPostRequest request, CancellationToken cancellationToken)

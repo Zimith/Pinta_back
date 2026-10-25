@@ -13,6 +13,12 @@ public class EFPostRepository : IPostRepository
         this.dbContext = dbContext;
     }
 
+    public async Task<bool> Create(Post post)
+    {
+        await dbContext.Posts.AddAsync(post);
+        return true;
+    }
+
     public async Task<List<Post>> GetPosts(
         User user, 
         int currentPage, 

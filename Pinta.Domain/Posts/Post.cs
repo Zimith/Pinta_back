@@ -1,4 +1,5 @@
 using Pinta.Domain.Auth;
+using Pinta.Domain.Exceptions;
 
 namespace Pinta.Domain.Posts;
 
@@ -6,6 +7,7 @@ public class Post
 {
     #region Private
     private int id;
+    private string title = string.Empty;
     private string description = string.Empty;
     private DateTime creationDate;
     private string? image;
@@ -20,6 +22,12 @@ public class Post
     {
         get { return id; }
         set { id = value; }
+    }
+
+    public string Title
+    {
+        get { return title; }
+        set { title = value; }
     }
 
     public string Description
@@ -62,8 +70,16 @@ public class Post
     }
     #endregion
 
-    public void Edit()
+    public void Edit(string description, string? image, string? game)
     {
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            throw new ValidationException("La descripción del post no puede estar vacía");
+        }
+
+        Description = description;
+        Image = image;
+        Game = game;
     }
 
     public void Delete()
