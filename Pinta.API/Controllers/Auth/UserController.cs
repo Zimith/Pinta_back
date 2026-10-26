@@ -28,16 +28,17 @@ public class UserController : ControllerBase
 
     [HttpPost]
 
-    public async Task<IActionResult> Create([FromForm]CreateUserRequest request)
+    public async Task<IActionResult> Create([FromForm]CreateUserRequest request, CancellationToken cancellationToken)
     {
-        await validationUser(request);
-        Image? image = await generatorImage(request.file);
+        await validationUser(request, cancellationToken);
+        Image? image = await generatorImage(request.file, cancellationToken);
 
         //Agregar validacion usando renex
         //8 caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial
 
         User user = createUser(request, image);
-        await saveToDatabase(user);
+        await saveToDatabase(user, cancellationToken);
+        
 
         CreateUserResponse response = new CreateUserResponse
         {
@@ -58,10 +59,10 @@ public class UserController : ControllerBase
 
     }
 
-    private async Task saveToDatabase(User user)
+    private async Task saveToDatabase(User user, CancellationToken cancellationToken)
     {
-        await dataBase.UserRepository.Create(user);
-        await this.dataBase.SaveChangesasync();
+        await dataBase.UserRepository.Create(user, cancellationToken);
+        await dataBase.SaveChangesAsync(cancellationToken);
     }
 
     private static User createUser(CreateUserRequest request, Image? image)
@@ -78,22 +79,24 @@ public class UserController : ControllerBase
         return user;
     }
 
-    private async Task<Image?> generatorImage(IFormFile? file)
+    private async Task<Image?> generatorImage(IFormFile? file, CancellationToken cancellationToken)
     {
         if (file is null) return null;
         
         await using var stream = file.OpenReadStream();
         using var ms = new MemoryStream();
-        await stream.CopyToAsync(ms);
+        await stream.CopyToAsync(ms, cancellationToken);
         byte[]? fileData = ms.ToArray();
         string?fileName = file.FileName;
         
         FileStorageService storageService = new FileStorageService(env);
-        return await storageService.SaveImageAsync(fileData, fileName);
+        return await storageService.SaveImageAsync(fileData, fileName, cancellationToken);
     }
 
-    private async Task validationUser(CreateUserRequest request)
+    private async Task validationUser(CreateUserRequest request, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (String.IsNullOrEmpty(request.username))
         {
             throw new ValidationException("El nombre de usuario no puede estar vacío");
@@ -109,13 +112,13 @@ public class UserController : ControllerBase
             throw new ValidationException("El correo electrónico no puede estar vacío");
         }
 
-        User? existingUserName = await this.dataBase.UserRepository.GetUserByUsername(request.username);
+        User? existingUserName = await this.dataBase.UserRepository.GetUserByUsername(request.username, cancellationToken);
 
         if (existingUserName != null)
         {
             throw new ValidationException("El nombre de usuario ya existe " + request.username);
         }
-        User?  existingEmail = await this.dataBase.UserRepository.GetUserByEmail(request.email);
+        User?  existingEmail = await this.dataBase.UserRepository.GetUserByEmail(request.email, cancellationToken);
         if (existingEmail !=null)
         {
             throw new ValidationException("El Email ya esta en uso" + request.email);
@@ -124,9 +127,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login ([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login ([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        User user = await validateLogin(request);
+        User user = await validateLogin(request, cancellationToken);
 
         //Esta todo correcto, generamos el token debajo
 
@@ -148,8 +151,10 @@ public class UserController : ControllerBase
         });
     }
 
-    private async Task<User> validateLogin(LoginRequest request)
+    private async Task<User> validateLogin(LoginRequest request, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (String.IsNullOrEmpty(request.username))
         {
             throw new ValidationException("El nombre de usuario no puede estar vacío");
@@ -159,7 +164,7 @@ public class UserController : ControllerBase
             throw new ValidationException("La contraseña no puede estar vacía");
         }
 
-        User? user = await this.dataBase.UserRepository.GetUserByUsername(request.username);
+        User? user = await this.dataBase.UserRepository.GetUserByUsername(request.username, cancellationToken);
         if (user == null)
         {
             throw new InvalidCredentialsException("Usuario o contraseña incorrectos");
@@ -174,7 +179,7 @@ public class UserController : ControllerBase
     }
     [Authorize]
     [HttpPut("edit")]
-    public async Task<IActionResult> Update([FromForm] UpdateRequest request)
+    public async Task<IActionResult> Update([FromForm] UpdateRequest request, CancellationToken cancellationToken)
     {
 
         string? idToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -185,7 +190,7 @@ public class UserController : ControllerBase
         }
         int userId = int.Parse(idToken);
 
-        User? userDB = await this.dataBase.UserRepository.GetUserById(userId);
+        User? userDB = await this.dataBase.UserRepository.GetUserById(userId, cancellationToken);
         if (userDB==null)
         {
             return NotFound("El usuario no existe");
@@ -196,13 +201,13 @@ public class UserController : ControllerBase
         }
         if(request.avatar != null)
         {
-            userDB.Avatar = await generatorImage(request.avatar);
+            userDB.Avatar = await generatorImage(request.avatar, cancellationToken);
         }
         if(request.banner != null)
         {
-            userDB.Banner = await generatorImage(request.banner);
+            userDB.Banner = await generatorImage(request.banner, cancellationToken);
         }
-        await this.dataBase.SaveChangesAsync();
+        await this.dataBase.SaveChangesAsync(cancellationToken);
 
         UpdateResponse response = new UpdateResponse
         {
@@ -222,13 +227,13 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string? username = "")
+    public async Task<IActionResult> Search([FromQuery] string? username = "", CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
             return BadRequest("El buscador esta vacio, escribi algo");
         }
-        List<User> userSearch = await this.dataBase.UserRepository.SearchUsers(username);
+        List<User> userSearch = await this.dataBase.UserRepository.SearchUsers(username, cancellationToken);
         
         if(userSearch.Count == 0)
         {
@@ -257,13 +262,13 @@ public class UserController : ControllerBase
     }
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetProfile ([FromRoute] int id)
+    public async Task<IActionResult> GetProfile ([FromRoute] int id, CancellationToken cancellationToken)
     {
         if (id <= 0)
         {
             return BadRequest("El id del usuario no es válido");
         }
-        User? userDB = await this.dataBase.UserRepository.GetProfile(id);
+        User? userDB = await this.dataBase.UserRepository.GetProfile(id, cancellationToken);
 
         if (userDB == null)
         {

@@ -21,6 +21,7 @@ public class FileStorageService
         string fileName,
         CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         Directory.CreateDirectory(_storagePath);
 
         var extension = Path.GetExtension(fileName);
@@ -31,7 +32,9 @@ public class FileStorageService
         using var image = new MagickImage(data);
 
         image.Format = MagickFormat.WebP;
+        cancellationToken.ThrowIfCancellationRequested();
         await image.WriteAsync(physicalPath);
+        cancellationToken.ThrowIfCancellationRequested();
 
         return new Image
         {
