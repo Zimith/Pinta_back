@@ -19,6 +19,16 @@ public class EFPostRepository : IPostRepository
         return true;
     }
 
+    public async Task<Post?> GetById(int id)
+    {
+        return await dbContext.Posts.FirstOrDefaultAsync(post => post.Id == id);
+    }
+
+    public void Delete(Post post)
+    {
+        dbContext.Posts.Remove(post);
+    }
+
     public async Task<List<Post>> GetPosts(
         User user, 
         int currentPage, 

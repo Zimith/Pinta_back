@@ -72,6 +72,63 @@ public class PostsController : ControllerBase
         });
     }
 
+    [Authorize]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> EditPost(int id,[FromBody] UpdatePostRequest request, CancellationToken cancellationToken)
+    {
+        Post? post = await this.dataBase.PostRepository.GetById(id);
+        if (post is null)
+        {
+            throw new BusinessNotFoundException("El post no existe");
+        }
+
+        long userId = User.GetUserId();
+        if (post.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        post.Edit(request.title, request.body);
+        await this.dataBase.SaveChangesAsync(cancellationToken);
+
+        UpdatePostResponse response = new UpdatePostResponse
+        {
+            id = post.Id,
+            title = post.Title,
+            body = post.Description
+        };
+
+        return Ok(new ResponseDTO<UpdatePostResponse>
+        {
+            code = (int)HttpStatusCode.OK,
+            message = "Post actualizado correctamente",
+            payload = response,
+            success = true
+        });
+    }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeletePost(int id, CancellationToken cancellationToken)
+    {
+        Post? post = await this.dataBase.PostRepository.GetById(id);
+        if (post is null)
+        {
+            throw new BusinessNotFoundException("El post no existe");
+        }
+
+        long userId = User.GetUserId();
+        if (post.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        this.dataBase.PostRepository.Delete(post);
+        await this.dataBase.SaveChangesAsync(cancellationToken);
+
+        return NoContent();
+    }
+
 	[Authorize]
     [HttpGet]
     public async Task<IActionResult> GetPosts([FromQuery] GetPostRequest request, CancellationToken cancellationToken)

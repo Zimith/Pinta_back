@@ -70,16 +70,20 @@ public class Post
     }
     #endregion
 
-    public void Edit(string description, string? image, string? game)
+    public void Edit(string title, string description)
     {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new ValidationException("El título del post no puede estar vacío");
+        }
+
         if (string.IsNullOrWhiteSpace(description))
         {
             throw new ValidationException("La descripción del post no puede estar vacía");
         }
 
+        Title = title;
         Description = description;
-        Image = image;
-        Game = game;
     }
 
     public void Delete()
